@@ -1,7 +1,9 @@
 package com.dev.shoki.controller;
 
+import com.dev.shoki.constants.CUDefine;
 import com.dev.shoki.constants.GS25Define;
 import com.dev.shoki.constants.StoreType;
+import com.dev.shoki.utils.Utils;
 import com.dev.shoki.vo.CU;
 import com.dev.shoki.vo.GS25;
 import org.jsoup.Jsoup;
@@ -36,10 +38,10 @@ public class CUController {
         System.setProperty("webdriver.chrome.driver", "/Users/shoki/Downloads/chromedriver");
 
         webDriver = new ChromeDriver();
-        webDriver.get("http://gs25.gsretail.com/gscvs/ko/products/event-goods");
+        webDriver.get("http://cu.bgfretail.com/event/plus.do?category=event&depth2=1&sf=N");
         Thread.sleep(3000);
-        webDriver.findElement(By.id("TOTAL")).click();
-        Thread.sleep(5000);
+//        webDriver.findElement(By.id("TOTAL")).click();
+//        Thread.sleep(5000);
         getCUList();
 
         return new ResponseEntity(null, HttpStatus.OK);
@@ -49,35 +51,32 @@ public class CUController {
         String htmlSource = webDriver.getPageSource();
         Document document = Jsoup.parse(htmlSource);
 
-        Elements eventTab = document.select(".eventtab");
-        Elements tblWrap = eventTab.select(".tblwrap").attr("style", "display:block");
-        Element wrap = tblWrap.get(tblWrap.size()-1);
-        Elements prodList = wrap.select(".prod_list");
+        Elements prodListWrap = document.select(".prodListWrap");
+        Elements prodListUl = prodListWrap.select("ul");
+        Elements prodList = prodListUl.select("li");
 
         List<CU> listCU = new ArrayList<CU>();
         for (Element item : prodList) {
-            for (Element prodBox : item.select(".prod_box")) {
-//                String flag = prodBox.select(".flag_box").select("span").text();
-//                String cost = prodBox.select(".cost").text();
+            String flag = item.select("ul").select("li").text();
 
-//                GS25 gs25 = new GS25();
-//                gs25.setName(prodBox.select(".tit").text());
-//                if(flag.equals(GS25Define.ProdItemType.ONE_ONE)) {
-//                    gs25.setProdItemType(GS25Define.ProdItemType.ONE_ONE);
-//                } else if(flag.equals(GS25Define.ProdItemType.TOW_ONE)) {
-//                    gs25.setProdItemType(GS25Define.ProdItemType.TOW_ONE);
-//                } else if(flag.equals(GS25Define.ProdItemType.BONUS)) {
-//                    gs25.setProdItemType(GS25Define.ProdItemType.BONUS);
-//                }
-//                gs25.setStoreType(StoreType.GS25);
-//                gs25.setImgUrl(prodBox.select("img").attr("src"));
-//                gs25.setPrice(Integer.valueOf(cost.replaceAll(",", "").replaceAll("원", "")));
+            CU cu = new CU();
+            cu.setName(item.select(".prodName").text());
+            cu.setImgUrl(item.select("img").attr("src"));
+            cu.setPrice(Utils.convertPrice(item.select(".prodPrice").text()));
+            cu.setStoreType(StoreType.CU);
 
-//                listGs25.add(gs25);
+            if(flag.equals(CUDefine.ProdItemType.ONE_ONE)) {
+                cu.setProdItemType(CUDefine.ProdItemType.ONE_ONE);
+            } else if(flag.equals(CUDefine.ProdItemType.TOW_ONE)) {
+                cu.setProdItemType(CUDefine.ProdItemType.TOW_ONE);
+            } else if(flag.equals(CUDefine.ProdItemType.THREE_ONE)) {
+                cu.setProdItemType(CUDefine.ProdItemType.THREE_ONE);
             }
+            System.out.println(cu.getName() + " / " + cu.getStoreType());
+            listCU.add(cu);
         }
-        ((JavascriptExecutor)webDriver).executeScript("goodsPageController.moveControl(1)");
+        ((JavascriptExecutor) webDriver).executeScript("goodsPageController.moveControl(1)");
         Thread.sleep(3000);
-        getCUList();
+//        getCUList();
     }
 }

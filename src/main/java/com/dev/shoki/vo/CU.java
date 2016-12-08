@@ -1,34 +1,15 @@
 package com.dev.shoki.vo;
 
-import lombok.Data;
-
 /**
  * Created by shoki on 16. 12. 8..
  */
-public class GS25 {
-
+public class CU {
     private String name;
     private int price;
     private String prodItemType;
     private String StoreType;
     private String imgUrl;
-    private GS25 bonusItem;
-
-    public GS25 getBonusItem() {
-        return bonusItem;
-    }
-
-    public void setBonusItem(GS25 bonusItem) {
-        this.bonusItem = bonusItem;
-    }
-
-    public String getImgUrl() {
-        return imgUrl;
-    }
-
-    public void setImgUrl(String imgUrl) {
-        this.imgUrl = imgUrl;
-    }
+    private CU bonusItem;
 
     public String getName() {
         return name;
@@ -60,5 +41,21 @@ public class GS25 {
 
     public void setStoreType(String storeType) {
         StoreType = storeType;
+    }
+
+    public String getImgUrl() {
+        return imgUrl;
+    }
+
+    public void setImgUrl(String imgUrl) {
+        this.imgUrl = imgUrl;
+    }
+
+    public CU getBonusItem() {
+        return bonusItem;
+    }
+
+    public void setBonusItem(CU bonusItem) {
+        this.bonusItem = bonusItem;
     }
 }

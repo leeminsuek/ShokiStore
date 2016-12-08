@@ -2,7 +2,7 @@ package com.dev.shoki.controller;
 
 import com.dev.shoki.constants.GS25Define;
 import com.dev.shoki.constants.StoreType;
-import com.dev.shoki.utils.Utils;
+import com.dev.shoki.vo.CU;
 import com.dev.shoki.vo.GS25;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -21,12 +21,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by shoki on 16. 12. 4..
+ * Created by shoki on 16. 12. 8..
  */
-@RestController
-@RequestMapping("/store/gs25")
-public class GSController {
 
+
+@RestController
+@RequestMapping("/store/cu")
+public class CUController {
 
     WebDriver webDriver;
 
@@ -39,12 +40,12 @@ public class GSController {
         Thread.sleep(3000);
         webDriver.findElement(By.id("TOTAL")).click();
         Thread.sleep(5000);
-        getGS25List();
+        getCUList();
 
         return new ResponseEntity(null, HttpStatus.OK);
     }
 
-    public void getGS25List() throws InterruptedException {
+    public void getCUList() throws InterruptedException {
         String htmlSource = webDriver.getPageSource();
         Document document = Jsoup.parse(htmlSource);
 
@@ -53,37 +54,30 @@ public class GSController {
         Element wrap = tblWrap.get(tblWrap.size()-1);
         Elements prodList = wrap.select(".prod_list");
 
-        List<GS25> listGs25 = new ArrayList<GS25>();
+        List<CU> listCU = new ArrayList<CU>();
         for (Element item : prodList) {
             for (Element prodBox : item.select(".prod_box")) {
-                String flag = prodBox.select(".flag_box").select("span").text();
-                String cost = prodBox.select(".cost").text();
+//                String flag = prodBox.select(".flag_box").select("span").text();
+//                String cost = prodBox.select(".cost").text();
 
-                GS25 gs25 = new GS25();
-                gs25.setName(prodBox.select(".tit").text());
-                if(flag.equals(GS25Define.ProdItemType.ONE_ONE)) {
-                    gs25.setProdItemType(GS25Define.ProdItemType.ONE_ONE);
-                } else if(flag.equals(GS25Define.ProdItemType.TOW_ONE)) {
-                    gs25.setProdItemType(GS25Define.ProdItemType.TOW_ONE);
-                } else if(flag.equals(GS25Define.ProdItemType.BONUS)) {
-                    gs25.setProdItemType(GS25Define.ProdItemType.BONUS);
+//                GS25 gs25 = new GS25();
+//                gs25.setName(prodBox.select(".tit").text());
+//                if(flag.equals(GS25Define.ProdItemType.ONE_ONE)) {
+//                    gs25.setProdItemType(GS25Define.ProdItemType.ONE_ONE);
+//                } else if(flag.equals(GS25Define.ProdItemType.TOW_ONE)) {
+//                    gs25.setProdItemType(GS25Define.ProdItemType.TOW_ONE);
+//                } else if(flag.equals(GS25Define.ProdItemType.BONUS)) {
+//                    gs25.setProdItemType(GS25Define.ProdItemType.BONUS);
+//                }
+//                gs25.setStoreType(StoreType.GS25);
+//                gs25.setImgUrl(prodBox.select("img").attr("src"));
+//                gs25.setPrice(Integer.valueOf(cost.replaceAll(",", "").replaceAll("원", "")));
 
-                    GS25 bonus = new GS25();
-                    bonus.setPrice(Utils.convertPrice(prodBox.select(".dum_box").select(".dum_txt").select(".price").select(".cost").text()));
-                    bonus.setName(prodBox.select(".dum_box").select(".dum_txt").select("name").text());
-                    bonus.setImgUrl(prodBox.select(".dum_box").select(".dum_prd").select("img").attr("src"));
-
-                    gs25.setBonusItem(bonus);
-                }
-                gs25.setStoreType(StoreType.GS25);
-                gs25.setImgUrl(prodBox.select("img").attr("src"));
-                gs25.setPrice(Utils.convertPrice(cost));
-
-                listGs25.add(gs25);
+//                listGs25.add(gs25);
             }
         }
         ((JavascriptExecutor)webDriver).executeScript("goodsPageController.moveControl(1)");
         Thread.sleep(3000);
-        getGS25List();
+        getCUList();
     }
 }

@@ -1,0 +1,38 @@
+buildscript {
+	ext {
+		springBootVersion = '1.4.2.RELEASE'
+	}
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+	}
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'spring-boot'
+
+jar {
+	baseName = 'shoki'
+	version = '0.0.1-SNAPSHOT'
+}
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+	mavenCentral()
+}
+
+
+dependencies {
+	compile('org.springframework.boot:spring-boot-starter')
+	compile("org.springframework:spring-jdbc:+")
+	compile "org.projectlombok:lombok:1.16.6"
+	compile('org.springframework.boot:spring-boot-starter-web')
+	compile group: 'org.seleniumhq.selenium', name: 'selenium-java', version: '3.0.1'
+	compile group: 'org.jsoup', name: 'jsoup', version: '1.10.1'
+	runtime('mysql:mysql-connector-java')
+	testCompile('org.springframework.boot:spring-boot-starter-test')
+}

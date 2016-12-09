@@ -42,9 +42,17 @@ public class CUController {
         Thread.sleep(3000);
 //        webDriver.findElement(By.id("TOTAL")).click();
 //        Thread.sleep(5000);
+//        getCUList();
+        loopCU();
         getCUList();
 
         return new ResponseEntity(null, HttpStatus.OK);
+    }
+
+    private void loopCU() throws InterruptedException {
+        ((JavascriptExecutor) webDriver).executeScript("javascript:nextPage(1)");
+        Thread.sleep(3000);
+        loopCU();
     }
 
     public void getCUList() throws InterruptedException {
@@ -57,26 +65,26 @@ public class CUController {
 
         List<CU> listCU = new ArrayList<CU>();
         for (Element item : prodList) {
-            String flag = item.select("ul").select("li").text();
 
-            CU cu = new CU();
-            cu.setName(item.select(".prodName").text());
-            cu.setImgUrl(item.select("img").attr("src"));
-            cu.setPrice(Utils.convertPrice(item.select(".prodPrice").text()));
-            cu.setStoreType(StoreType.CU);
+            System.out.println(item.select(".prodName").text() + " / " + item.select(".prodPrice").text());
 
-            if(flag.equals(CUDefine.ProdItemType.ONE_ONE)) {
-                cu.setProdItemType(CUDefine.ProdItemType.ONE_ONE);
-            } else if(flag.equals(CUDefine.ProdItemType.TOW_ONE)) {
-                cu.setProdItemType(CUDefine.ProdItemType.TOW_ONE);
-            } else if(flag.equals(CUDefine.ProdItemType.THREE_ONE)) {
-                cu.setProdItemType(CUDefine.ProdItemType.THREE_ONE);
-            }
-            System.out.println(cu.getName() + " / " + cu.getStoreType());
-            listCU.add(cu);
+//            String flag = item.select("ul").select("li").text();
+//
+//            CU cu = new CU();
+//            cu.setName(item.select(".prodName").text());
+//            cu.setImgUrl(item.select("img").attr("src"));
+//            cu.setPrice(Utils.convertPrice(item.select(".prodPrice").text()));
+//            cu.setStoreType(StoreType.CU);
+//
+//            if(flag.equals(CUDefine.ProdItemType.ONE_ONE)) {
+//                cu.setProdItemType(CUDefine.ProdItemType.ONE_ONE);
+//            } else if(flag.equals(CUDefine.ProdItemType.TOW_ONE)) {
+//                cu.setProdItemType(CUDefine.ProdItemType.TOW_ONE);
+//            } else if(flag.equals(CUDefine.ProdItemType.THREE_ONE)) {
+//                cu.setProdItemType(CUDefine.ProdItemType.THREE_ONE);
+//            }
+//            System.out.println(cu.getName() + " / " + cu.getStoreType());
+//            listCU.add(cu);
         }
-        ((JavascriptExecutor) webDriver).executeScript("goodsPageController.moveControl(1)");
-        Thread.sleep(3000);
-//        getCUList();
     }
 }

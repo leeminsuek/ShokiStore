@@ -10,9 +10,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -40,9 +38,6 @@ public class CUController {
         webDriver = new ChromeDriver();
         webDriver.get("http://cu.bgfretail.com/event/plus.do?category=event&depth2=1&sf=N");
         Thread.sleep(3000);
-//        webDriver.findElement(By.id("TOTAL")).click();
-//        Thread.sleep(5000);
-//        getCUList();
         loopCU();
         getCUList();
 
@@ -50,9 +45,16 @@ public class CUController {
     }
 
     private void loopCU() throws InterruptedException {
-        ((JavascriptExecutor) webDriver).executeScript("javascript:nextPage(1)");
-        Thread.sleep(3000);
-        loopCU();
+        try {
+            WebElement moreBtn = webDriver.findElement(By.className("prodListBtn-w"));
+            if(moreBtn != null) {
+                moreBtn.click();
+                Thread.sleep(5000);
+                loopCU();
+            }
+        } catch (NoSuchElementException e) {
+
+        }
     }
 
     public void getCUList() throws InterruptedException {

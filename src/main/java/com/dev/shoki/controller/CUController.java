@@ -6,6 +6,7 @@ import com.dev.shoki.constants.StoreType;
 import com.dev.shoki.utils.Utils;
 import com.dev.shoki.vo.CU;
 import com.dev.shoki.vo.GS25;
+import org.apache.catalina.Store;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -47,7 +48,7 @@ public class CUController {
     private void loopCU() throws InterruptedException {
         try {
             WebElement moreBtn = webDriver.findElement(By.className("prodListBtn-w"));
-            if(moreBtn != null) {
+            if (moreBtn != null) {
                 moreBtn.click();
                 Thread.sleep(5000);
                 loopCU();
@@ -62,31 +63,32 @@ public class CUController {
         Document document = Jsoup.parse(htmlSource);
 
         Elements prodListWrap = document.select(".prodListWrap");
-        Elements prodListUl = prodListWrap.select("ul");
-        Elements prodList = prodListUl.select("li");
+        Elements prodListUl = prodListWrap.select(".photo");
+        Elements prodList = prodListUl.parents();
 
         List<CU> listCU = new ArrayList<CU>();
-        for (Element item : prodList) {
+        for (Element item : prodListUl) {
+            item = item.parent();
+            CU cu = new CU();
 
-            System.out.println(item.select(".prodName").text() + " / " + item.select(".prodPrice").text());
+            String cost = item.select(".prodPrice").text();
+            String name = item.select(".prodName").text();
+            String imgUrl = item.select(".photo").select("img").attr("src");
+            String flag = item.select("ul").select("li").text();
 
-//            String flag = item.select("ul").select("li").text();
-//
-//            CU cu = new CU();
-//            cu.setName(item.select(".prodName").text());
-//            cu.setImgUrl(item.select("img").attr("src"));
-//            cu.setPrice(Utils.convertPrice(item.select(".prodPrice").text()));
-//            cu.setStoreType(StoreType.CU);
-//
-//            if(flag.equals(CUDefine.ProdItemType.ONE_ONE)) {
-//                cu.setProdItemType(CUDefine.ProdItemType.ONE_ONE);
-//            } else if(flag.equals(CUDefine.ProdItemType.TOW_ONE)) {
-//                cu.setProdItemType(CUDefine.ProdItemType.TOW_ONE);
-//            } else if(flag.equals(CUDefine.ProdItemType.THREE_ONE)) {
-//                cu.setProdItemType(CUDefine.ProdItemType.THREE_ONE);
-//            }
-//            System.out.println(cu.getName() + " / " + cu.getStoreType());
-//            listCU.add(cu);
+            if (flag.equals(CUDefine.ProdItemType.ONE_ONE)) {
+                cu.setProdItemType(CUDefine.ProdItemType.ONE_ONE);
+            } else if (flag.equals(CUDefine.ProdItemType.TOW_ONE)) {
+                cu.setProdItemType(CUDefine.ProdItemType.TOW_ONE);
+            } else if (flag.equals(CUDefine.ProdItemType.THREE_ONE)) {
+                cu.setProdItemType(CUDefine.ProdItemType.THREE_ONE);
+            }
+            cu.setStoreType(StoreType.CU);
+            cu.setImgUrl(imgUrl);
+            cu.setName(name);
+            cu.setPrice(Utils.convertPrice(cost));
+
+            listCU.add(cu);
         }
     }
 }
